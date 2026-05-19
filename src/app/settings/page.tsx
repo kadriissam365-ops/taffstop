@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { AlertTriangle, Download, RefreshCcw } from "lucide-react";
+import { AlertTriangle, Download, RefreshCcw, Target } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Button } from "@/components/Button";
 import { BRANDS, findBrand } from "@/lib/brands";
@@ -145,6 +145,60 @@ export default function SettingsPage() {
               </button>
             ))}
           </div>
+        </section>
+
+        <section className="rounded-2xl border border-border bg-bg-card p-4">
+          <div className="mb-3 flex items-center gap-2 text-xs uppercase tracking-wide text-fg-muted">
+            <Target className="h-3.5 w-3.5" />
+            Objectif d'épargne
+          </div>
+          <p className="mb-3 text-[11px] text-fg-faded">
+            Vise un truc concret avec l'argent économisé. Ça muscle la motivation.
+          </p>
+          <div className="grid grid-cols-[1fr,90px] gap-2">
+            <label className="block text-xs">
+              <span className="mb-1 block text-fg-muted">Pour quoi ?</span>
+              <input
+                placeholder="ex : un week-end à Lisbonne"
+                value={profile.savings_goal?.label ?? ""}
+                onChange={(e) =>
+                  update({
+                    savings_goal: {
+                      label: e.target.value,
+                      amount: profile.savings_goal?.amount ?? 0,
+                    },
+                  })
+                }
+                className="w-full rounded-xl border border-border bg-bg-elevated px-3 py-2 text-sm"
+              />
+            </label>
+            <label className="block text-xs">
+              <span className="mb-1 block text-fg-muted">Montant (€)</span>
+              <input
+                type="number"
+                step="10"
+                min="0"
+                value={profile.savings_goal?.amount ?? ""}
+                onChange={(e) =>
+                  update({
+                    savings_goal: {
+                      label: profile.savings_goal?.label ?? "",
+                      amount: parseFloat(e.target.value) || 0,
+                    },
+                  })
+                }
+                className="w-full rounded-xl border border-border bg-bg-elevated px-3 py-2 text-sm"
+              />
+            </label>
+          </div>
+          {profile.savings_goal && (profile.savings_goal.label || profile.savings_goal.amount > 0) && (
+            <button
+              onClick={() => update({ savings_goal: null })}
+              className="mt-3 text-[11px] text-fg-faded underline"
+            >
+              Supprimer l'objectif
+            </button>
+          )}
         </section>
 
         <section className="rounded-2xl border border-border bg-bg-card p-4">

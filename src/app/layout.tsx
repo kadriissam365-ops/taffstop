@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { ProfileGate } from "@/components/ProfileGate";
 import { BottomNav } from "@/components/BottomNav";
 import { Toaster } from "@/components/Toaster";
+import { SosFab } from "@/components/SosFab";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -67,6 +68,7 @@ export default function RootLayout({
                 <main className="flex flex-1 flex-col">{children}</main>
                 <BottomNav />
               </div>
+              <SosFab />
             </ProfileGate>
           </Toaster>
         </ThemeProvider>

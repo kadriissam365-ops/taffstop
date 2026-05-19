@@ -6,6 +6,7 @@ import { CheckCircle2, Lock, Trophy } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Button } from "@/components/Button";
 import { HEALTH_MILESTONES } from "@/lib/constants";
+import { BADGES, daysSinceQuit, isBadgeUnlocked } from "@/lib/badges";
 import { loadProfile, loadLogs, resetQuit } from "@/lib/storage";
 import {
   type Profile,
@@ -35,6 +36,9 @@ export default function MilestonesPage() {
 
   const isQuit = profile.goal === "quit";
   const unlocked = HEALTH_MILESTONES.filter((m) => seconds >= m.threshold_seconds).length;
+  const days = daysSinceQuit(profile.quit_date);
+  const badgesUnlocked = BADGES.filter((b) => isBadgeUnlocked(b, profile.quit_date)).length;
+  const nextBadge = BADGES.find((b) => b.threshold_days > days);
 
   const handleResetQuit = () => {
     resetQuit();
@@ -73,6 +77,57 @@ export default function MilestonesPage() {
             </div>
           )}
         </div>
+
+        {isQuit && (
+          <div className="rounded-3xl border border-border bg-bg-card p-5">
+            <div className="mb-3 flex items-center justify-between">
+              <div>
+                <div className="text-xs uppercase tracking-wider text-fg-muted">
+                  Tes badges
+                </div>
+                <div className="mt-0.5 text-sm font-medium">
+                  {badgesUnlocked} / {BADGES.length} débloqués
+                </div>
+              </div>
+              {nextBadge && (
+                <div className="text-right text-[11px] text-fg-faded">
+                  Prochain :<br />
+                  <span className="font-medium text-fg-muted">
+                    {nextBadge.emoji} J{nextBadge.threshold_days} (
+                    {Math.max(nextBadge.threshold_days - days, 0)}j restants)
+                  </span>
+                </div>
+              )}
+            </div>
+            <div className="grid grid-cols-4 gap-2">
+              {BADGES.map((b, i) => {
+                const got = isBadgeUnlocked(b, profile.quit_date);
+                return (
+                  <motion.div
+                    key={b.id}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: i * 0.04 }}
+                    title={`${b.title} — ${b.description}`}
+                    className={`flex flex-col items-center gap-1 rounded-2xl border p-2 text-center transition ${
+                      got
+                        ? "border-brand/40 bg-brand-soft/40"
+                        : "border-border bg-bg-elevated grayscale opacity-50"
+                    }`}
+                  >
+                    <span className="text-2xl">{b.emoji}</span>
+                    <span className="text-[10px] font-medium leading-tight">
+                      {b.title}
+                    </span>
+                    <span className="text-[9px] text-fg-faded">
+                      J{b.threshold_days}
+                    </span>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         <ul className="flex flex-col gap-2">
           {HEALTH_MILESTONES.map((m, i) => {

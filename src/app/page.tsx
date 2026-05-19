@@ -11,6 +11,8 @@ import {
   TrendingDown,
   Heart,
   AlertCircle,
+  Target,
+  PartyPopper,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Header } from "@/components/Header";
@@ -185,6 +187,15 @@ export default function Home() {
             </>
           )}
         </div>
+
+        {/* Objectif d'épargne (mode quit uniquement) */}
+        {isQuit && profile.savings_goal && profile.savings_goal.amount > 0 && (
+          <SavingsGoalCard
+            label={profile.savings_goal.label || "Mon objectif"}
+            target={profile.savings_goal.amount}
+            saved={saved}
+          />
+        )}
 
         {/* CTA rapides */}
         <div className="grid grid-cols-2 gap-3 text-xs">

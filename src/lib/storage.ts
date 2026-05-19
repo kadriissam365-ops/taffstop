@@ -2,10 +2,20 @@
 
 import type { LogEntry, Profile } from "./calculations";
 
+export type CravingEntry = {
+  id: string;
+  created_at: string;
+  intensity: number;
+  trigger_note?: string | null;
+};
+
 const STORAGE_KEYS = {
   PROFILE: "taffstop:profile",
   LOGS: "taffstop:logs",
+  CRAVINGS: "taffstop_cravings",
 };
+
+export const TAFFSTOP_STORAGE_PREFIXES = ["taffstop:", "taffstop_"];
 
 export function loadProfile(): Profile | null {
   if (typeof window === "undefined") return null;
@@ -75,6 +85,61 @@ export function resetQuit() {
 
 export function clearAll() {
   if (typeof window === "undefined") return;
-  localStorage.removeItem(STORAGE_KEYS.PROFILE);
-  localStorage.removeItem(STORAGE_KEYS.LOGS);
+  // Remove all taffstop_* and taffstop:* keys
+  const toRemove: string[] = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (!key) continue;
+    if (TAFFSTOP_STORAGE_PREFIXES.some((p) => key.startsWith(p))) {
+      toRemove.push(key);
+    }
+  }
+  for (const k of toRemove) localStorage.removeItem(k);
+}
+
+export function loadCravings(): CravingEntry[] {
+  if (typeof window === "undefined") return [];
+  const raw = localStorage.getItem(STORAGE_KEYS.CRAVINGS);
+  if (!raw) return [];
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return [];
+  }
+}
+
+export function saveCravings(cravings: CravingEntry[]) {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(STORAGE_KEYS.CRAVINGS, JSON.stringify(cravings));
+}
+
+export function addCraving(intensity: number, triggerNote?: string | null): CravingEntry {
+  const entry: CravingEntry = {
+    id: crypto.randomUUID(),
+    created_at: new Date().toISOString(),
+    intensity,
+    trigger_note: triggerNote ?? null,
+  };
+  const list = loadCravings();
+  list.push(entry);
+  saveCravings(list);
+  return entry;
+}
+
+export function exportAllData(): Record<string, unknown> {
+  if (typeof window === "undefined") return {};
+  const out: Record<string, unknown> = {};
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (!key) continue;
+    if (!TAFFSTOP_STORAGE_PREFIXES.some((p) => key.startsWith(p))) continue;
+    const raw = localStorage.getItem(key);
+    if (raw == null) continue;
+    try {
+      out[key] = JSON.parse(raw);
+    } catch {
+      out[key] = raw;
+    }
+  }
+  return out;
 }

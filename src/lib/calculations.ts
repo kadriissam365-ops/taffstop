@@ -1,5 +1,10 @@
 import { HEALTH_CONSTANTS, HEALTH_MILESTONES, type Milestone } from "./constants";
 
+export type SavingsGoal = {
+  label: string;
+  amount: number;
+};
+
 export type Profile = {
   name?: string;
   brand: string;
@@ -9,6 +14,7 @@ export type Profile = {
   goal: "reduce" | "quit" | "observe";
   start_date: string;
   quit_date: string | null;
+  savings_goal?: SavingsGoal | null;
 };
 
 export type LogEntry = {
