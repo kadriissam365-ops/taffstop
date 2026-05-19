@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { ProfileGate } from "@/components/ProfileGate";
 import { BottomNav } from "@/components/BottomNav";
+import { Toaster } from "@/components/Toaster";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,15 +21,18 @@ export const metadata: Metadata = {
   description:
     "Visualise chaque cigarette, chaque taffe et leurs conséquences en temps réel. Reprends le contrôle.",
   applicationName: "taffstop",
-  manifest: "/manifest.webmanifest",
+  manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
     title: "taffstop",
   },
   icons: {
-    icon: "/icon.svg",
-    apple: "/apple-icon.png",
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+    apple: "/icon-192.svg",
   },
 };
 
@@ -57,12 +61,14 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-bg text-fg">
         <ThemeProvider>
-          <ProfileGate>
-            <div className="mx-auto flex w-full max-w-md flex-1 flex-col">
-              <main className="flex flex-1 flex-col">{children}</main>
-              <BottomNav />
-            </div>
-          </ProfileGate>
+          <Toaster>
+            <ProfileGate>
+              <div className="mx-auto flex w-full max-w-md flex-1 flex-col">
+                <main className="flex flex-1 flex-col">{children}</main>
+                <BottomNav />
+              </div>
+            </ProfileGate>
+          </Toaster>
         </ThemeProvider>
       </body>
     </html>
