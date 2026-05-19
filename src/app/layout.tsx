@@ -6,6 +6,7 @@ import { ProfileGate } from "@/components/ProfileGate";
 import { BottomNav } from "@/components/BottomNav";
 import { Toaster } from "@/components/Toaster";
 import { SosFab } from "@/components/SosFab";
+import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -69,6 +70,7 @@ export default function RootLayout({
                 <BottomNav />
               </div>
               <SosFab />
+              <ServiceWorkerRegister />
             </ProfileGate>
           </Toaster>
         </ThemeProvider>
